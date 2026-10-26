@@ -1,0 +1,74 @@
+// The telemetry schema, for a gRPC ingest. The reference daemon (cmd/acd) speaks the JSON form of these same
+// messages (pkg/telemetry); generate Go from this file with protoc + protoc-gen-go when adding gRPC, nothing in
+// the heuristics changes. Field semantics: pkg/telemetry/types.go.
+syntax = "proto3";
+
+package argus.telemetry.v1;
+
+option go_package = "github.com/Ederjoel26/argus/pkg/telemetry/pb;pb";
+
+message Vec3 {
+  double x = 1;
+  double y = 2; // up
+  double z = 3;
+}
+
+message Rot {
+  double yaw = 1;   // degrees around Y, 0 = +Z
+  double pitch = 2; // degrees, up positive
+}
+
+// An enemy near the player with the server's own occlusion result.
+message Contact {
+  string id = 1;
+  Vec3 position = 2;
+  bool visible = 3;
+}
+
+// One game-server tick of a player. Bits of `inputs` and `flags`: pkg/telemetry/types.go (In*, Flag*).
+message Sample {
+  uint64 tick = 1;
+  Vec3 position = 2;
+  Rot rotation = 3;
+  uint32 inputs = 4;
+  uint32 flags = 5;
+  repeated Contact contacts = 6;
+}
+
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  FIRE = 1;          // one trigger pull
+  HIT = 2;           // one impact the server registered (a shotgun: one FIRE, several HITs)
+  RELOAD_START = 3;
+  RELOAD_END = 4;
+  WEAPON_SWITCH = 5;
+}
+
+message Event {
+  uint64 tick = 1;
+  EventType type = 2;
+  string weapon_id = 3;
+  string target_id = 4;
+  Vec3 origin = 5;                  // HIT: the server's shot origin
+  Vec3 impact = 6;                  // HIT: the server's point of impact; range and silent-aim come from these two
+  double damage = 7;
+  bool headshot = 8;
+  uint64 target_visible_since = 9;  // HIT: tick the target became visible to the shooter (0: unknown)
+}
+
+// A player's telemetry for a span of ticks, emitted by the game server (not by the client).
+message Batch {
+  string match_id = 1;
+  string player_id = 2;
+  string device = 3;                // "mouse", "gamepad", "touch"
+  repeated Sample samples = 4;
+  repeated Event events = 5;
+}
+
+message Ack {
+  uint32 accepted = 1;
+}
+
+service Telemetry {
+  rpc Ingest(stream Batch) returns (Ack);
+}

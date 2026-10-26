@@ -1,0 +1,68 @@
+{
+  "$comment": "Game profile for argus. Distances are your game's world units; the example follows a 20 Hz server whose sprint is 56 u/s. Every limit gets `tolerance` slack on top. Deterministic checks (teleport, fire rate, reload, range, damage) carry the big weights; statistical ones (aim jitter, pre-aim) the small ones, so only a pattern of them reaches a penalty.",
+  "tick_rate": 20,
+
+  "movement": {
+    "max_player_velocity": 56,
+    "max_vehicle_velocity": 300,
+    "max_glide_velocity": 180,
+    "max_rise_velocity": 60,
+    "max_fall_velocity": 450,
+    "acceleration_threshold": 1200,
+    "tolerance": 0.15,
+    "teleport_factor": 3.0,
+    "max_gap_ticks": 40,
+    "min_violations": 3
+  },
+
+  "aim": {
+    "snap_angular_velocity": 1500,
+    "snap_settle_angular_velocity": 20,
+    "snap_to_fire_ticks": 3,
+    "min_reaction_ms": 120,
+    "jitter_window_ticks": 16,
+    "jitter_min_stddev_deg": 0.02,
+    "silent_aim_max_angle": 4.0
+  },
+
+  "combat": {
+    "fire_rate_tolerance_ticks": 1,
+    "range_tolerance": 0.10,
+    "damage_tolerance": 0.01
+  },
+
+  "vision": {
+    "preaim_angle": 3.0,
+    "preaim_ticks": 30,
+    "min_target_move": 1.0,
+    "max_distance": 1200
+  },
+
+  "weapon_profiles": {
+    "rifle":   { "fire_rate": 10.0, "max_range": 400,  "spread_cone": 2.5, "max_damage": 34,  "headshot_multiplier": 2.0, "magazine": 30, "reload_ms": 2200 },
+    "smg":     { "fire_rate": 13.0, "max_range": 300,  "spread_cone": 4.0, "max_damage": 22,  "headshot_multiplier": 2.0, "magazine": 35, "reload_ms": 2000 },
+    "pistol":  { "fire_rate": 6.0,  "max_range": 300,  "spread_cone": 3.0, "max_damage": 28,  "headshot_multiplier": 2.0, "magazine": 15, "reload_ms": 1500 },
+    "shotgun": { "fire_rate": 1.2,  "max_range": 150,  "spread_cone": 8.0, "max_damage": 20,  "headshot_multiplier": 1.5, "magazine": 5,  "reload_ms": 4000 },
+    "sniper":  { "fire_rate": 0.8,  "max_range": 2000, "spread_cone": 0.3, "max_damage": 120, "headshot_multiplier": 2.5, "magazine": 5,  "reload_ms": 3500 }
+  },
+
+  "scoring": {
+    "half_life_s": 120,
+    "max_score": 100,
+    "recent_findings": 32
+  },
+
+  "penalty_thresholds": {
+    "warning": 20,
+    "shadowban": 45,
+    "kick": 70,
+    "disconnect": 90
+  },
+
+  "check_weights": {
+    "movement.teleport": 35, "movement.noclip": 30, "movement.speed": 20, "movement.vertical": 20, "movement.acceleration": 12,
+    "aim.silent": 35, "aim.snap": 15, "aim.reaction": 12, "aim.robotic": 8,
+    "combat.unknown_weapon": 40, "combat.damage": 35, "combat.fire_rate": 30, "combat.reload": 30, "combat.magazine": 30, "combat.range": 25,
+    "vision.preaim": 10
+  }
+}
