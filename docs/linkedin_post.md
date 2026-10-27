@@ -28,7 +28,8 @@ The reference implementation is Go, standard library only, sharded by player so 
 and lock-free. Every heuristic is a pure function with a synthetic-trace test next to it, so the math is auditable
 and the thresholds are tunable in the open.
 
-[First integration: the Creative Reborn community server, where hits were trusted as the client sent them.]
+I already have it wired into a real shooter's server, where hits were trusted as the client sent them. For now it
+only reports, no enforcement, while I calibrate the thresholds on real matches.
 
 It's a start, not a silver bullet: the roadmap has gRPC/UDP ingest, Kafka/Redis sharding, a replay tool for
 calibration and learned baselines per weapon. If you run a game and want to add a weapon profile, or you can build
